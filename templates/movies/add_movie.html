@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 m-auto">
+            <h2 class="text-center">Add Movie</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="btn btn-primary mb-2" type="submit">Add Movie</button>
+            </form>
+        </div>
+    </div>
+</div>
+    
+
+{% endblock %}

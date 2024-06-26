@@ -1,0 +1,97 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="card mt-5 m-auto" style="max-width: 800px;">
+        <div class="row g-0">
+
+          <div class="col-md-4">
+            <img  style="height: 100%; width: 100%;" src="{{ movie.poster.url }}" class="img-fluid rounded-start" alt="{{ movie.title }}">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title">{{ movie.title | upper }} {% if is_favourite %} <i style="color: red; font-size: 24px;" class="fa-solid fa-heart ms-3"></i> {% endif%} </h5>
+              <p class="card-text">Description : {{ movie.description | capfirst }}</p>
+              <p class="card-text">Release Date: {{ movie.release_date }}</p>
+              <p class="card-text">Actors: {{ movie.actors | capfirst }}</p>
+              <p class="card-text">Category: {{ movie.category.name | capfirst }}</p>
+              <p class="card-text d-flex"><a class="btn btn-outline-danger" href="{{ movie.trailer_link }}">Watch Trailer <i class="fa-brands fa-square-youtube"></i></a></p>
+              {% if user.is_authenticated %}
+                <div class="d-flex justify-content-between" style="height:100%; width:90%;">
+                        {% if movie.user == request.user %}
+                            <a class="btn btn-success" href="{% url 'edit_movie' movie.id %}">Edit Movie</a>
+                            <form method="post" action="">
+                                {% csrf_token %}
+                                <a href="{% url 'delete_movie' movie.id %}" class="btn btn-danger" type="submit">Delete Movie</a>
+                            </form>
+                        {% endif %}
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#reviewModal">
+                            Add Review
+                        </button>
+                        <a class="back" href="{% url 'movie_list' %}">
+                            <button class="btn btn-secondary">Back <i class="fa-solid fa-house"></i></i></button>
+                        </a>
+                        {% if is_favourite %}
+                            
+                            <!-- <a class="btn btn-success" href="{% url 'favourite_movies' %}">Show fav</a>        -->
+                        {% else %}    
+                            <form method="post" action="">
+                                {% csrf_token %}
+                                <a href="{% url 'add_to_favourites' movie.id %}" class="btn btn-danger" type="submit">add fav</a>
+                            </form>
+                        {% endif %}
+                    </div>
+              {% else %}
+                <div class="d-flex align-items-center" style="height:100%; width:50%;">
+                    <a class="btn btn-success m-2" href="{% url 'movie_list' %}">Back </a>    
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row m-5">
+            
+                <h3 class="text-center mt-5">Reviews</h3>
+                {% for review in reviews %}
+                <div class="card m-3" style="max-width: 360px;">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="{% static 'profile.avif' %}" class="img-fluid rounded-start" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ review.user.username }}</h5>
+                                <h5 class="card-subtitle">{{ review.rating }} <i style="color: yellow;" class="fa-solid fa-star"></i></h5>
+                                <p class="card-text">{{ review.review }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+      </div>
+    
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reviewModalLabel">Add Review</h5>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="reviewForm">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submitReview">Submit</button>
+                        </div>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

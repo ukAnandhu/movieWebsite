@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ category.name }}</title>
+</head>
+<body>
+    <h2>Category: {{ category.name }}</h2>
+    <ul>
+        {% for movie in movies %}
+            <li>
+                <a href="{% url 'movie_detail' movie.id %}">{{ movie.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'movie_list' %}">Back to Movie List</a>
+</body>
+</html>
